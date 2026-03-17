@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradingWithAI — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --brand:       #1a56db;
+  --brand-dark:  #1341b0;
+  --brand-light: #e8f0fe;
+  --surface-0:   #ffffff;
+  --surface-1:   #f8fafc;
+  --surface-2:   #f1f5f9;
+  --border-0:    #e2e8f0;
+  --border-1:    #cbd5e1;
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary:  #94a3b8;
+  --gain:  #0fad55;
+  --loss:  #e84040;
+  --font-ui:   'Inter', -apple-system, sans-serif;
+  --font-data: 'IBM Plex Mono', monospace;
+  --shadow-lg: 0 10px 15px -3px rgba(15,23,42,.08), 0 4px 6px -4px rgba(15,23,42,.06);
+  --shadow-xl: 0 20px 25px -5px rgba(15,23,42,.1), 0 8px 10px -6px rgba(15,23,42,.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-ui);
+  background: var(--surface-1);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── BACKGROUND ─────────────────────────────── */
+.bg-pattern {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(26,86,219,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(15,173,85,.05) 0%, transparent 60%);
+}
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(226,232,240,.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(226,232,240,.6) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* ── LAYOUT ─────────────────────────────────── */
+.page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── LEFT SIDE — BRANDING ───────────────────── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 80px;
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+}
+
+.brand-side { padding: 20px 0; }
+
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 48px;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(26,86,219,.3);
+}
+.logo-name {
+  font-size: 18px; font-weight: 700;
+  letter-spacing: -0.5px; color: var(--text-primary);
+}
+.logo-name span { color: var(--brand); }
+
+.brand-headline {
+  font-size: 42px; font-weight: 800;
+  line-height: 1.1; letter-spacing: -1.5px;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+.brand-headline .highlight {
+  background: linear-gradient(135deg, var(--brand), #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-sub {
+  font-size: 16px; color: var(--text-secondary);
+  line-height: 1.6; margin-bottom: 40px;
+  max-width: 420px;
+}
+
+/* Feature list */
+.features { display: flex; flex-direction: column; gap: 14px; }
+.feature-item {
+  display: flex; align-items: center; gap: 12px;
+}
+.feature-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.feature-icon.blue { background: rgba(26,86,219,.1); }
+.feature-icon.green { background: rgba(15,173,85,.1); }
+.feature-icon.purple { background: rgba(124,58,237,.1); }
+.feature-icon.orange { background: rgba(245,158,11,.1); }
+.feature-text { font-size: 14px; color: var(--text-secondary); font-weight: 500; }
+.feature-text strong { color: var(--text-primary); font-weight: 600; }
+
+/* Stats row */
+.stats-row {
+  display: flex; gap: 32px; margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-0);
+}
+.stat-item { }
+.stat-num {
+  font-size: 24px; font-weight: 800;
+  color: var(--brand); letter-spacing: -1px;
+  font-family: var(--font-data);
+}
+.stat-label { font-size: 12px; color: var(--text-tertiary); font-weight: 500; margin-top: 2px; }
+
+/* ── AUTH CARD ──────────────────────────────── */
+.auth-card {
+  background: var(--surface-0);
+  border: 1px solid var(--border-0);
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+.auth-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--brand), #7c3aed);
+}
+
+.auth-tabs {
+  display: flex; gap: 0;
+  background: var(--surface-1);
+  border-radius: 10px; padding: 4px;
+  margin-bottom: 28px;
+}
+.auth-tab {
+  flex: 1; height: 36px;
+  border-radius: 8px; border: none;
+  font-family: var(--font-ui);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  color: var(--text-tertiary); background: transparent;
+}
+.auth-tab.active {
+  background: var(--surface-0);
+  color: var(--text-primary); font-weight: 600;
+  box-shadow: 0 1px 3px rgba(15,23,42,.1);
+}
+
+.auth-title {
+  font-size: 22px; font-weight: 700;
+  letter-spacing: -0.5px; margin-bottom: 4px;
+}
+.auth-subtitle {
+  font-size: 13px; color: var(--text-secondary);
+  margin-bottom: 28px; line-height: 1.5;
+}
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--text-secondary); margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.form-input-wrap { position: relative; }
+.form-input {
+  width: 100%; height: 42px; padding: 0 14px 0 40px;
+  border: 1.5px solid var(--border-0);
+  border-radius: 10px; font-size: 13.5px;
+  font-family: var(--font-ui); color: var(--text-primary);
+  background: var(--surface-0); outline: none;
+  transition: all 0.15s;
+}
+.form-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(26,86,219,.1);
+}
+.form-input.error { border-color: var(--loss); box-shadow: 0 0 0 3px rgba(232,64,64,.1); }
+.form-input::placeholder { color: var(--text-tertiary); }
+.input-icon {
+  position: absolute; left: 13px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px; pointer-events: none;
+  color: var(--text-tertiary);
+}
+.input-toggle {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--text-tertiary); font-size: 14px;
+  padding: 2px;
+}
+.form-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 5px; }
+.form-error { font-size: 11px; color: var(--loss); margin-top: 5px; font-weight: 500; display: none; }
+.form-error.show { display: block; }
+
+/* Name row */
+.name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Submit button */
+.submit-btn {
+  width: 100%; height: 44px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  color: white; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600;
+  font-family: var(--font-ui); cursor: pointer;
+  transition: all 0.15s; margin-top: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  letter-spacing: 0.2px;
+  box-shadow: 0 4px 12px rgba(26,86,219,.3);
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(26,86,219,.35); }
+.submit-btn:active { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: white;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0; color: var(--text-tertiary); font-size: 12px;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border-0);
+}
+
+/* Google button */
+.google-btn {
+  width: 100%; height: 42px;
+  background: var(--surface-0); border: 1.5px solid var(--border-0);
+  border-radius: 10px; font-size: 13.5px; font-weight: 500;
+  font-family: var(--font-ui); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  color: var(--text-primary); transition: all 0.15s;
+}
+.google-btn:hover { background: var(--surface-1); border-color: var(--border-1); }
+.google-icon { width: 18px; height: 18px; }
+
+/* Forgot password */
+.forgot-link {
+  font-size: 12px; color: var(--brand); font-weight: 500;
+  text-decoration: none; float: right; margin-top: -2px;
+}
+.forgot-link:hover { text-decoration: underline; }
+
+/* Terms */
+.terms-text {
+  font-size: 11px; color: var(--text-tertiary);
+  text-align: center; margin-top: 16px; line-height: 1.5;
+}
+.terms-text a { color: var(--brand); text-decoration: none; }
+.terms-text a:hover { text-decoration: underline; }
+
+/* Success state */
+.success-state {
+  text-align: center; padding: 20px 0; display: none;
+}
+.success-icon { font-size: 48px; margin-bottom: 12px; }
+.success-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.success-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* Alert */
+.alert {
+  padding: 10px 14px; border-radius: 8px;
+  font-size: 12.5px; margin-bottom: 16px;
+  display: none; align-items: center; gap: 8px;
+  font-weight: 500;
+}
+.alert.show { display: flex; }
+.alert.error { background: rgba(232,64,64,.08); border: 1px solid rgba(232,64,64,.2); color: #c0392b; }
+.alert.success { background: rgba(15,173,85,.08); border: 1px solid rgba(15,173,85,.2); color: #0a7a3c; }
+.alert.info { background: var(--brand-light); border: 1px solid rgba(26,86,219,.2); color: var(--brand-dark); }
+
+/* Password strength */
+.pwd-strength { margin-top: 6px; display: none; }
+.pwd-strength.show { display: block; }
+.pwd-bars { display: flex; gap: 3px; margin-bottom: 4px; }
+.pwd-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border-0); transition: background 0.2s; }
+.pwd-bar.weak { background: var(--loss); }
+.pwd-bar.medium { background: #f59e0b; }
+.pwd-bar.strong { background: var(--gain); }
+.pwd-label { font-size: 10.5px; color: var(--text-tertiary); }
+
+/* Footer */
+footer {
+  text-align: center; padding: 16px;
+  font-size: 11.5px; color: var(--text-tertiary);
+  position: relative; z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .split { grid-template-columns: 1fr; gap: 32px; }
+  .brand-side { display: none; }
+  .page { align-items: flex-start; padding-top: 32px; }
+  .split { justify-items: center; }
+  .auth-card { width: 100%; max-width: 420px; }
+}
+@media (max-width: 480px) {
+  .auth-card { padding: 28px 20px; border-radius: 16px; }
+  .brand-headline { font-size: 32px; }
+  .name-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div class="bg-grid"></div>
+
+<div class="page">
+  <div class="split">
+
+    <!-- LEFT — BRAND SIDE -->
+    <div class="brand-side">
+      <div class="logo">
+        <div class="logo-icon">📈</div>
+        <span class="logo-name">Trading<span>WithAI</span></span>
+      </div>
+
+      <h1 class="brand-headline">
+        Trade smarter<br>with the power<br>of <span class="highlight">AI</span>
+      </h1>
+
+      <p class="brand-sub">
+        India's first all-in-one AI trading platform. Connect your broker, get AI-powered signals, and trade — all in one place. No switching between apps.
+      </p>
+
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon blue">🤖</div>
+          <div class="feature-text"><strong>AI Analyst</strong> — Get exact entry, target & stop-loss for every trade</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon green">⚡</div>
+          <div class="feature-text"><strong>Zerodha Connected</strong> — Live portfolio, positions & one-click orders</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon purple">📊</div>
+          <div class="feature-text"><strong>TradingView Charts</strong> — Full-featured charts with AI analysis</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">📰</div>
+          <div class="feature-text"><strong>Live News & Signals</strong> — AI scans markets 24/7 for opportunities</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-num">5Cr+</div>
+          <div class="stat-label">Active traders in India</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">Free</div>
+          <div class="stat-label">To start, no card needed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">AI market monitoring</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — AUTH CARD -->
+    <div class="auth-card">
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert" id="alertBox"></div>
+
+      <!-- SIGN IN FORM -->
+      <div id="form-signin">
+        <div class="auth-title">Welcome back 👋</div>
+        <div class="auth-subtitle">Sign in to your TradingWithAI account</div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="form-input-wrap">
+            <span class="input-icon">✉️</span>
+            <input class="form-input" type="email" id="si-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-error" id="si-email-err">Please enter a valid email</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Password
+            <a href="#" class="forgot-link" onclick="showForgotPassword(event)">Forgot password?</a>
+          </label>
+          <div class="form-input-wrap">
+            <span class="input-icon">🔒</span>
+            <input class="form-input" type="password" id="si-password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')signIn()">
+            <button class="input-toggle" onclick="togglePwd('si-password',this)" type="button">👁</button>
+          </div>
+          <div class="form-error" id="si-pwd-err">Password is required</div>
+        </div>
+
+        <button class="submit-btn" id="si-btn" onclick="signIn()">
+          <div class="btn-spinner" id="si-spinner"></div>
+          <span id="si-btn-text">Sign In →</span>
+        </button>
+
+        <div class="divider">or continue with</div>
+
+        <button class="google-btn" onclick="signInWithGoogle()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="terms-text">
+          Don't have an account? <a href="#" onclick="switchTab('signup');return false;">Create one free →</a>
+        </div>
+      </div>
+
+      <!-- SIGN UP FORM -->
+      <div id="form-signup" style="display:none;">
+        <div class="auth-title">Start trading smarter 🚀</div>
+        <div class="auth-subtitle">Create your free account — no credit card required</div>
+
+        <div class="name-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <div class="form-input-wrap">
+              <span class="input-icon">👤</span>
+              <input class="form-input" type="text" id="su-fname" placeholder="Rahul" autocomplete="given-name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <div class="form-input-wrap">
+              <span class="input-icon">👤</span>
+              <input class="form-input" type="text" id="su-lname" placeholder="Sharma" autocomplete="family-name">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="form-input-wrap">
+            <span class="input-icon">✉️</span>
+            <input class="form-input" type="email" id="su-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-error" id="su-email-err">Please enter a valid email</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="form-input-wrap">
+            <span class="input-icon">📱</span>
+            <input class="form-input" type="tel" id="su-phone" placeholder="+91 98765 43210" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="form-input-wrap">
+            <span class="input-icon">🔒</span>
+            <input class="form-input" type="password" id="su-password" placeholder="Min. 8 characters" autocomplete="new-password" oninput="checkPasswordStrength(this.value)" onkeydown="if(event.key==='Enter')signUp()">
+            <button class="input-toggle" onclick="togglePwd('su-password',this)" type="button">👁</button>
+          </div>
+          <div class="pwd-strength" id="pwdStrength">
+            <div class="pwd-bars">
+              <div class="pwd-bar" id="pb1"></div>
+              <div class="pwd-bar" id="pb2"></div>
+              <div class="pwd-bar" id="pb3"></div>
+              <div class="pwd-bar" id="pb4"></div>
+            </div>
+            <div class="pwd-label" id="pwdLabel">Enter a strong password</div>
+          </div>
+          <div class="form-error" id="su-pwd-err">Password must be at least 8 characters</div>
+        </div>
+
+        <button class="submit-btn" id="su-btn" onclick="signUp()">
+          <div class="btn-spinner" id="su-spinner"></div>
+          <span id="su-btn-text">Create Free Account →</span>
+        </button>
+
+        <div class="divider">or continue with</div>
+
+        <button class="google-btn" onclick="signInWithGoogle()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="terms-text">
+          By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+          Already have an account? <a href="#" onclick="switchTab('signin');return false;">Sign in →</a>
+        </div>
+      </div>
+
+      <!-- FORGOT PASSWORD FORM -->
+      <div id="form-forgot" style="display:none;">
+        <div class="auth-title">Reset password 🔑</div>
+        <div class="auth-subtitle">Enter your email and we'll send you a reset link</div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="form-input-wrap">
+            <span class="input-icon">✉️</span>
+            <input class="form-input" type="email" id="fp-email" placeholder="you@example.com">
+          </div>
+        </div>
+        <button class="submit-btn" onclick="resetPassword()">
+          <span>Send Reset Link →</span>
+        </button>
+        <div class="terms-text" style="margin-top:12px;">
+          <a href="#" onclick="switchTab('signin');return false;">← Back to Sign In</a>
+        </div>
+      </div>
+
+      <!-- EMAIL VERIFICATION STATE -->
+      <div class="success-state" id="verify-state">
+        <div class="success-icon">📧</div>
+        <div class="success-title">Check your email!</div>
+        <div class="success-sub">We've sent a verification link to your email address. Click it to activate your account and start trading.</div>
+        <div style="margin-top:16px;font-size:12px;color:var(--text-tertiary);">Didn't receive it? <a href="#" onclick="resendVerification()" style="color:var(--brand)">Resend email</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2026 TradingWithAI · <a href="#" style="color:inherit;">Privacy</a> · <a href="#" style="color:inherit;">Terms</a> · <a href="#" style="color:inherit;">Contact</a>
+  &nbsp;·&nbsp; <span style="color:#f59e0b;">⚠ Not SEBI registered. Educational platform only.</span>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════
+//  SUPABASE CONFIG
+//  Replace these with your actual Supabase keys
+//  Get them free at supabase.com → New Project
+// ══════════════════════════════════════════════
+const SUPABASE_URL    = localStorage.getItem('sb_url') || 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON   = localStorage.getItem('sb_key') || 'YOUR_SUPABASE_ANON_KEY';
+
+let supabase = null;
+
+function initSupabase() {
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+    showAlert('info', '⚙️ Setup needed — see instructions below to connect your Supabase account');
+    return false;
+  }
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    // Check if already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) redirectToApp(session.user);
+    });
+    // Listen for auth changes
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) redirectToApp(session.user);
+      if (event === 'SIGNED_OUT') showTab('signin');
+    });
+    return true;
+  } catch (e) {
+    showAlert('error', 'Supabase init failed: ' + e.message);
+    return false;
+  }
+}
+
+function redirectToApp(user) {
+  // Save user info locally
+  localStorage.setItem('tw_user', JSON.stringify({
+    id:    user.id,
+    email: user.email,
+    name:  user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+  }));
+  // Redirect to main app
+  window.location.href = 'TradingWithAI.html';
+}
+
+// ── SIGN IN ─────────────────────────────────
+async function signIn() {
+  if (!supabase) { showSetupGuide(); return; }
+  const email = document.getElementById('si-email').value.trim();
+  const pwd   = document.getElementById('si-password').value;
+  if (!validateEmail(email)) { showFieldError('si-email-err'); return; }
+  if (!pwd) { showFieldError('si-pwd-err'); return; }
+  setLoading('si-btn', 'si-spinner', 'si-btn-text', true, 'Signing in…');
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+  setLoading('si-btn', 'si-spinner', 'si-btn-text', false, 'Sign In →');
+  if (error) {
+    showAlert('error', error.message === 'Invalid login credentials'
+      ? '❌ Wrong email or password. Please try again.'
+      : '❌ ' + error.message);
+  }
+}
+
+// ── SIGN UP ─────────────────────────────────
+async function signUp() {
+  if (!supabase) { showSetupGuide(); return; }
+  const fname = document.getElementById('su-fname').value.trim();
+  const lname = document.getElementById('su-lname').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const phone = document.getElementById('su-phone').value.trim();
+  const pwd   = document.getElementById('su-password').value;
+  if (!validateEmail(email)) { showFieldError('su-email-err'); return; }
+  if (pwd.length < 8) { showFieldError('su-pwd-err'); return; }
+  setLoading('su-btn', 'su-spinner', 'su-btn-text', true, 'Creating account…');
+  const { data, error } = await supabase.auth.signUp({
+    email, password: pwd,
+    options: {
+      data: { full_name: `${fname} ${lname}`.trim(), phone },
+      emailRedirectTo: window.location.origin + '/TradingWithAI.html'
+    }
+  });
+  setLoading('su-btn', 'su-spinner', 'su-btn-text', false, 'Create Free Account →');
+  if (error) {
+    showAlert('error', '❌ ' + error.message);
+  } else if (data.user && !data.session) {
+    // Email verification required
+    document.getElementById('form-signup').style.display  = 'none';
+    document.getElementById('verify-state').style.display = 'block';
+  }
+}
+
+// ── GOOGLE SIGN IN ───────────────────────────
+async function signInWithGoogle() {
+  if (!supabase) { showSetupGuide(); return; }
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/TradingWithAI.html' }
+  });
+  if (error) showAlert('error', '❌ ' + error.message);
+}
+
+// ── FORGOT PASSWORD ──────────────────────────
+async function resetPassword() {
+  if (!supabase) { showSetupGuide(); return; }
+  const email = document.getElementById('fp-email').value.trim();
+  if (!validateEmail(email)) { showAlert('error', 'Enter a valid email address'); return; }
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/reset-password.html'
+  });
+  if (error) showAlert('error', '❌ ' + error.message);
+  else showAlert('success', '✅ Reset link sent! Check your email inbox.');
+}
+
+async function resendVerification() {
+  const email = document.getElementById('su-email').value.trim();
+  if (supabase && email) await supabase.auth.resend({ type: 'signup', email });
+  showAlert('info', '📧 Verification email resent!');
+}
+
+// ── UI HELPERS ───────────────────────────────
+function switchTab(tab) {
+  document.getElementById('form-signin').style.display  = tab === 'signin'  ? 'block' : 'none';
+  document.getElementById('form-signup').style.display  = tab === 'signup'  ? 'block' : 'none';
+  document.getElementById('form-forgot').style.display  = tab === 'forgot'  ? 'block' : 'none';
+  document.getElementById('verify-state').style.display = 'none';
+  document.getElementById('tab-signin').className = 'auth-tab' + (tab === 'signin' ? ' active' : '');
+  document.getElementById('tab-signup').className = 'auth-tab' + (tab === 'signup' ? ' active' : '');
+  clearAlert();
+}
+
+function showForgotPassword(e) {
+  e.preventDefault();
+  document.getElementById('form-signin').style.display = 'none';
+  document.getElementById('form-forgot').style.display = 'block';
+}
+
+function showAlert(type, msg) {
+  const el = document.getElementById('alertBox');
+  el.className = `alert ${type} show`;
+  el.textContent = msg;
+}
+function clearAlert() { document.getElementById('alertBox').className = 'alert'; }
+
+function showFieldError(id) {
+  document.getElementById(id).classList.add('show');
+  setTimeout(() => document.getElementById(id).classList.remove('show'), 3000);
+}
+
+function setLoading(btnId, spinnerId, textId, loading, text) {
+  document.getElementById(btnId).disabled       = loading;
+  document.getElementById(spinnerId).style.display = loading ? 'block' : 'none';
+  document.getElementById(textId).textContent   = text;
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  inp.type  = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function checkPasswordStrength(pwd) {
+  const strength = document.getElementById('pwdStrength');
+  strength.className = 'pwd-strength show';
+  const bars  = [pb1, pb2, pb3, pb4];
+  const score = [pwd.length >= 8, /[A-Z]/.test(pwd), /[0-9]/.test(pwd), /[^A-Za-z0-9]/.test(pwd)].filter(Boolean).length;
+  const cls   = score <= 1 ? 'weak' : score <= 2 ? 'medium' : 'strong';
+  const label = ['', 'Weak', 'Fair', 'Good', 'Strong'][score];
+  bars.forEach((b, i) => { b.className = 'pwd-bar' + (i < score ? ' ' + cls : ''); });
+  document.getElementById('pwdLabel').textContent = label + (score < 4 ? ' — add uppercase, numbers & symbols' : ' password!');
+}
+
+// ── SETUP GUIDE (when Supabase not configured) ──
+function showSetupGuide() {
+  showAlert('info',
+    '📋 Setup needed: Get free Supabase keys at supabase.com and add them to the code'
+  );
+}
+
+// ── INIT ────────────────────────────────────
+initSupabase();
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Secrets
+*.env
+.env
+zerodha_token.json
+zerodha_config.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
